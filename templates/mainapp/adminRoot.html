@@ -1,0 +1,96 @@
+{% extends 'mainapp/base.html' %}
+
+
+
+
+
+
+{% block title %}Administrator - strona główna{% endblock title %}
+
+
+
+
+
+{% block xnavbar %}
+<li class="nav-item active">
+	<a class="nav-link" href="/admin">Szkoły</a>
+</li>
+<li class="nav-item">
+	<a class="nav-link" href="/admin/admin_list">Administratorzy</a>
+</li>
+{% endblock xnavbar %}
+
+
+
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">Strona główna</li>
+{% endblock breadcrumb %}
+
+
+
+
+
+
+{% block content %}
+	<div style="margin-top: 30px;">
+		<h3>Dane administratora:</h3>
+		<h5>Imię i nazwisko: {{ userFName }} {{ userLName }}</h4>
+	</div>
+
+
+
+	<div style="margin-top: 30px">
+		<h3>Lista szkół:</h3>
+		<table style="width=100%" class="table table-striped table-hover table-bordered">
+	<thead>
+		<tr>
+			<th colspan="3">Dane dyrektora</th>
+			<th colspan="2">Dane szkoły</th>
+			<th colspan="1">Operacje</th>
+		</tr>
+		<tr>
+			<th>Imię</th>
+			<th>Nazwisko</th>
+			<th>E-Mail</th>
+			<th>Nazwa</th>
+			<th>Adres</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for school in schoolList %}
+			<tr>
+				<td>{{ school.name }}</td>
+				<td>{{ school.surname }}</td>
+				<td>{{ school.email }}</td>
+				<td>{{ school.schoolName }}</td>
+				<td>{{ school.schoolAddress }}</td>
+				<td>
+					<div class="btn-group" role="group">
+						<a class="btn btn-primary" href="/school?id={{ school.id }}">Podgląd</a>
+						<a class="btn btn-danger" href="/admin/remove_school?schoolId={{ school.id }}">Usuń</a>
+					</div>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+	<tfoot>
+		<tr>
+			<th>Imię</th>
+			<th>Nazwisko</th>
+			<th>E-Mail</th>
+			<th>Nazwa</th>
+			<th>Adres</th>
+			<th></th>
+		</tr>
+		<tr>
+			<th colspan="3">Dane dyrektora</th>
+			<th colspan="2">Dane szkoły</th>
+			<th colspan="1">Operacje</th>
+		</tr>
+	</tfoot>
+		</table>
+		<a class="btn btn-danger" href="/admin/add_school">Dodaj szkołę</a>
+	</div>
+{% endblock content %}

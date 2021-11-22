@@ -16,9 +16,29 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from projekt.mainapp.views import mainPage
+import mainapp.views as vv
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', mainPage),
+	path('admin2/', admin.site.urls),
+	path('', vv.mainPage),
+	path('login', vv.loginAction),
+	path('logout', vv.logoutAction),
+	path('admin', vv.adminHome2),
+	path('admin/admin_list', vv.adminAdminList),
+	path('admin/add_admin', vv.adminAdd),
+	path('admin/add_admin_submit', vv.adminAddSubmit),
+	path('admin/remove_admin', vv.adminRemove),
+	path('admin/remove_admin_submit', vv.adminRemoveSubmit),
+	path('admin/add_school', vv.adminSchoolAdd),
+	path('admin/add_school_submit', vv.adminSchoolAddSubmit),
+	path('admin/remove_school', vv.adminSchoolRemove),
+	path('admin/remove_school_submit', vv.adminSchoolRemoveSubmit),
+	path('school', vv.schoolHome2),
+	path('school/student_list', vv.schoolStudentList),
+	path('school/subject_list', vv.schoolSubjectList),
+	path('teacher', vv.teacherHome2),
+	path('teacher/subject', vv.teacherSubject),
+	path('student', vv.studentHome2),
+	path('student/marks_view', vv.studentMarksView),
 ]

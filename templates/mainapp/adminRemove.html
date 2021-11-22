@@ -1,0 +1,20 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Usuń administratora{% endblock title %}
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="/">Strona główna</a></li>
+{% endblock breadcrumb %}
+
+{% block content %}
+				<div class="alert alert-warning" role="alert">Czy napewno chcesz usunąć administratora {{ adminDelName }} ?</div>
+
+				<form method="POST" action="/admin/remove_admin_submit" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="adminId" value="{{ adminDelId }}">
+        <button type="submit" class="btn btn-danger">Tak</button>
+        </form>
+
+				<form method="GET" action="/admin/admin_list" style="display:inline;">
+				<button type="submit" class="btn btn-primary">Nie</button>
+        </form>
+{% endblock content %}

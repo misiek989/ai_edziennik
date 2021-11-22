@@ -1,0 +1,78 @@
+{% extends 'mainapp/base.html' %}
+
+
+
+{% block title %}Szkoła - uczniowie{% endblock title %}
+
+
+
+{% block xnavbar %}
+<li class="nav-item">
+	<a class="nav-link" href="/school?id={{ schoolId }}">Nauczyciele</a>
+</li>
+<li class="nav-item active">
+	<a class="nav-link" href="/school/student_list?id={{ schoolId }}">Uczniowie</a>
+</li>
+<li class="nav-item">
+	<a class="nav-link" href="/school/subject_list?id={{ schoolId }}">Przedmioty</a>
+</li>
+{% endblock xnavbar %}
+
+
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">Strona główna</li>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+	<div style="margin-top: 30px;">
+		<h3>Dane szkoły:</h3>
+			<h5>Imię i nazwisko: {{ userFName }} {{ userLName }}</h5>
+			<h6 style="margin-top:5px;">Szkoła: {{ schoolName }}</h6>
+			<h6>Adres szkoły: {{ schoolAddress }}</h6>
+	</div>
+
+
+	<div style="margin-top: 30px">
+		<h3>Lista uczniów:</h3>
+		<table style="width=100%" class="table table-striped table-hover table-bordered">
+	<thead>
+		<tr>
+		<th>Imię</th>
+		<th>Nazwisko</th>
+		<th>E-Mail</th>
+		<th>Operacje</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for student in studentList %}
+			<tr>
+				<td>{{ student.name }}</td>
+				<td>{{ student.surname }}</td>
+				<td>{{ student.email }}</td>
+				<td>
+					<div class="btn-group" role="group">
+						<a class="btn btn-primary" href="/student?id={{ student.id }}">Podgląd</a>
+						<a class="btn btn-danger" href="/school/remove_student?studentId={{ student.id }}">Usuń</a>
+					</div>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+	<tfoot>
+		<tr>
+		<th>Imię</th>
+		<th>Nazwisko</th>
+		<th>E-Mail</th>
+		<th>Operacje</th>
+		</tr>
+	</tfoot>
+		</table>
+		<a class="btn btn-danger" href="/school/add_student">Dodaj ucznia</a>
+	</div>
+
+
+
+
+{% endblock content %}
