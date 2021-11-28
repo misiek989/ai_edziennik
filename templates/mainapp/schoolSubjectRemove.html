@@ -1,0 +1,47 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Usuwanie przedmiotu{% endblock title %}
+{% block breadcrumb %}
+
+{% if not superUser %}
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+{% else %}
+	<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+{% endif %}
+
+{% if pageSrc is not None %}
+	<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %}
+	<li class="breadcrumb-item"><a href="/school/student_list?id={{ schoolId }}">Przedmioty</a></li>
+{% endif %}
+
+<li class="breadcrumb-item active" aria-current="page">Usuwanie przedmiotu</li>
+
+{% endblock breadcrumb %}
+
+{% block content %}
+				<div class="alert alert-warning" role="alert">Czy napewno chcesz usunąć przedmiot {{ subjectDelName }} ?</div>
+
+				{% if pageSrc is not None %}
+					<form method="POST" action="/school/remove_subject_submit?id={{ schoolId }}&src=t" style="display:inline;">
+				{% else %}
+					<form method="POST" action="/school/remove_subject_submit?id={{ schoolId }}" style="display:inline;">
+				{% endif %}
+
+        {% csrf_token %}
+        <input type="hidden" name="subjectId" value="{{ subjectDelId }}">
+        <button type="submit" class="btn btn-danger">Tak</button>
+        </form>
+
+
+				{% if pageSrc is not None %}
+					<form method="GET" action="/teacher" style="display:inline;">
+						<input type="hidden" name="id" value="{{ teacherId }}">
+				{% else %}
+					<form method="GET" action="/school/subject_list" style="display:inline;">
+						<input type="hidden" name="id" value="{{ schoolId }}">
+				{% endif %}
+					<button type="submit" class="btn btn-primary">Nie</button>
+        </form>
+{% endblock content %}

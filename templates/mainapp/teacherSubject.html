@@ -11,7 +11,17 @@
 
 
 {% block breadcrumb %}
-<li class="breadcrumb-item active" aria-current="page">Strona główna</li>
+{% if superUserRole == 2 %} {# teacher #}
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Strona główna</a></li>
+{% elif superUserRole == 1 %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page">Przedmiot</li>
 {% endblock breadcrumb %}
 
 
@@ -26,12 +36,27 @@
 
 	<div style="margin-top: 30px">
 		<h3>Lista uczniów:</h3>
+		{% if superUser %}
+			<a style="margin-bottom: 10px;" class="btn btn-danger" href="/school/add_subjectstudent?id={{ schoolId }}&subjectId={{ subjectId }}">Dodaj ucznia</a>
+		{% endif %}
+		<a style="margin-bottom: 10px;" class="btn btn-danger" href="/teacher/add_subject_mark?id={{ teacherId }}&subjectId={{ subjectId }}">Dodaj zbiorczo ocenę</a>
 		<table style="width=100%" class="table table-striped table-hover table-bordered">
 	<thead>
 		<tr>
-		<th>Imię</th>
-		<th>Nazwisko</th>
-		<th>E-Mail</th>
+			<th colspan="3">Dane ucznia</th>
+			<th colspan="{{ markCountNum }}">Oceny</th>
+			<th colspan="1">Średnia</th>
+			<th colspan="1">Operacje</th>
+		</tr>
+		<tr>
+			<th>Imię</th>
+			<th>Nazwisko</th>
+			<th>E-Mail</th>
+			{% for mm in markCount %}
+				<th></th>
+			{% endfor %}
+			<th></th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -40,6 +65,31 @@
 				<td>{{ student.name }}</td>
 				<td>{{ student.surname }}</td>
 				<td>{{ student.email }}</td>
+				{% for mark in student.markList %}
+					<td>
+						<!-- <span style="font-size: 1.2em;background-color: #{{ mark.color }};" class="badge badge-success">{{ mark.mark }}</span> -->
+						<a style="font-weight: 700;background-color: #{{ mark.color }};border-color: #{{ mark.color }};" class="btn btn-danger" href="/teacher/edit_mark?id={{ teacherId }}&markId={{ mark.id }}">{{ mark.mark }}</a>
+					</td>
+				{% endfor %}
+				{% for mm in student.markCount %}
+					<td></td>
+				{% endfor %}
+					<td>
+						{% if student.srMark is None %}
+							<i>Brak</i>
+						{% else %}
+							<span style="font-size: 1.2em;background-color: #{{ student.srMarkColor }};" class="badge badge-success">{{ student.srMark }}</span>
+						{% endif %}
+					</td>
+				<td>
+					<div class="btn-group" role="group">
+						<a class="btn btn-success" href="/teacher/add_mark?id={{ teacherId }}&subjectStudentId={{ student.ss_id }}">Dodaj ocenę</a>
+						<a class="btn btn-info" href="/student/marks_view?id={{ student.id }}&studentSubjectId={{ student.ss_id }}&src=t">Podgląd ocen</a>
+						{% if superUser %}
+							<a class="btn btn-danger" href="/school/remove_subjectstudent?id={{ schoolId }}&subjectStudentId={{ student.ss_id }}">Usuń ucznia</a>
+						{% endif %}
+					</div>
+				</td>
 			</tr>
 		{% endfor %}
 	</tbody>
@@ -48,8 +98,68 @@
 			<th>Imię</th>
 			<th>Nazwisko</th>
 			<th>E-Mail</th>
+			{% for mm in markCount %}
+				<th></th>
+			{% endfor %}
+			<th></th>
+			<th></th>
+		</tr>
+		<tr>
+			<th colspan="3">Dane ucznia</th>
+			<th colspan="{{ markCountNum }}">Oceny</th>
+			<th colspan="1">Średnia</th>
+			<th colspan="1">Operacje</th>
 		</tr>
 	</tfoot>
 		</table>
 	</div>
+
+	<div style="margin-top: 30px;width: 25%;">
+		<h3>Wykresy:</h3>
+		<canvas id="myChart" width="400" height="400"></canvas>
+	</div>
 {% endblock content %}
+
+{% block scripts %}
+<script>
+const ctx = document.getElementById('myChart');
+
+const data = {
+  labels: ['≥1,0', '>1,9', '>2,4', '>2,9', '>3,4', '>3,9', '>4,4', '>4,9', '>5,4', '>5,9'],
+  datasets: [
+    {
+      label: 'Oceny',
+      data: {{ srPlotData }},//[1,2,3,4,5],
+      backgroundColor: [
+				'rgba(128, 0, 0, 0.2)',
+				'rgba(230, 0, 0, 0.2)',
+				'rgba(204, 58, 0, 0.2)',
+				'rgba(255, 119, 0, 0.2)',
+				'rgba(252, 210, 0, 0.2)',
+				'rgba(160, 204, 0, 0.2)',
+				'rgba(139, 204, 0, 0.2)',
+				'rgba(104, 222, 0, 0.2)',
+				'rgba(0, 242, 121, 0.2)',
+				'rgba(0, 242, 178, 0.2)'
+			],
+    }
+  ]
+};
+const myChart = new Chart(ctx, {
+	type: 'doughnut',
+	data: data,
+	options: {
+		responsive: true,
+		plugins: {
+			legend: {
+				position: 'top',
+			},
+			title: {
+				display: true,
+				text: 'Średnia ocen - wykres'
+			}
+		}
+	},
+});
+</script>
+{% endblock scripts %}

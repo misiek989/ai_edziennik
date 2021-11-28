@@ -1,0 +1,28 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Usuwanie ucznia{% endblock title %}
+{% block breadcrumb %}
+{% if not superUser %}
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+{% else %}
+	<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/school/student_list?id={{ schoolId }}">Uczniowie</a></li>
+<li class="breadcrumb-item active" aria-current="page">Usuwanie ucznia</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+				<div class="alert alert-warning" role="alert">Czy napewno chcesz usunąć ucznia {{ studentDelName }} ?</div>
+
+				<form method="POST" action="/school/remove_student_submit?id={{ schoolId }}" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="studentId" value="{{ studentDelId }}">
+        <button type="submit" class="btn btn-danger">Tak</button>
+        </form>
+
+				<form method="GET" action="/school/student_list" style="display:inline;">
+					<input type="hidden" name="id" value="{{ schoolId }}">
+					<button type="submit" class="btn btn-primary">Nie</button>
+        </form>
+{% endblock content %}

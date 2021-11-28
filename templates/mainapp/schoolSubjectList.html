@@ -21,7 +21,13 @@
 
 
 {% block breadcrumb %}
-<li class="breadcrumb-item active" aria-current="page">Strona główna</li>
+{% if not superUser %}
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+{% else %}
+	<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page">Przedmioty</li>
 {% endblock breadcrumb %}
 
 
@@ -59,7 +65,7 @@
 				<td>
 					<div class="btn-group" role="group">
 						<a class="btn btn-primary" href="/school/subject?id={{ subject.id }}">Podgląd</a>
-						<a class="btn btn-danger" href="/school/remove_subject?subjectId={{ subject.id }}">Usuń</a>
+						<a class="btn btn-danger" href="/school/remove_subject?id={{ schoolId }}&subjectId={{ subject.id }}">Usuń</a>
 					</div>
 				</td>
 			</tr>
@@ -79,6 +85,25 @@
 		</tr>
 	</tfoot>
 		</table>
+	</div>
+	<div style="padding-top: 15px;" class="row">
+
+		<div style="padding-left: 0px;" class="col">
+			<div class="dataTables_info" id="selectedColumn_info" role="status" aria-live="polite">Wyświetlono od {{ count_from }} do {{ count_to }} z {{ count_all }} wpisów</div>
+		</div>
+
+
+		<div style="padding-right: 0px;" class="col">
+			<nav aria-label="Page navigation example">
+				<ul class="pagination pagination-sm justify-content-end">
+					<li {% if not prev is None %}style="cursor: pointer;"{% endif %} class="page-item {% if prev is None %}disabled{% endif %}"><a class="page-link" {% if not prev is None %}href="/school/subject_list?id=1&page={{ prev }}"{% endif %} tabindex="-1">&lt;</a></li>
+					{% for page in pages %}
+					<li {% if not page.active %}style="cursor: pointer;"{% endif %} class="page-item {{ page.active|yesno:'active,' }}"><a class="page-link" {% if not page.active %}href="/school/subject_list?id=1&page={{ page.num }}"{% endif %}>{{ page.num }}</a></li>
+					{% endfor %}
+					<li {% if not next is None %}style="cursor: pointer;"{% endif %} class="page-item {% if next is None %}disabled{% endif %}"><a class="page-link" {% if not next is None %}href="/school/subject_list?id=1&page={{ next }}"{% endif %}>&gt;</a></li>
+				</ul>
+			</nav>
+		</div>
 	</div>
 
 

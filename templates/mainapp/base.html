@@ -51,6 +51,7 @@
 				</ol>
 				</nav>
 
+				{% if extra is not None %}<div class="alert alert-{{ extra.type }}" role="alert">{{ extra.caption }}</div>{% endif %}
 
 				{% block content %}
 

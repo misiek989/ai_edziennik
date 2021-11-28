@@ -1,0 +1,33 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Usuwanie ucznia{% endblock title %}
+{% block breadcrumb %}
+{% if superUser is None %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/teacher/subject?id={{ teacherId }}&subjectId={{ subjectId }}">Przedmiot</a></li>
+<li class="breadcrumb-item active" aria-current="page">Usuwanie ucznia</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+				<div class="alert alert-warning" role="alert">Czy napewno chcesz usunąć ucznia {{ studentDelName }} z przedmiotu {{ subjectDelName }} ?</div>
+
+				<form method="POST" action="/school/remove_subjectstudent_submit?id={{ schoolId }}" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="subjectStudentId" value="{{ subjectStudentId }}">
+        <button type="submit" class="btn btn-danger">Tak</button>
+        </form>
+
+
+
+				<form method="GET" action="/teacher/subject" style="display:inline;">
+					<input type="hidden" name="id" value="{{ teacherId }}">
+					<input type="hidden" name="subjectId" value="{{ subjectId }}">
+					<button type="submit" class="btn btn-primary">Nie</button>
+        </form>
+{% endblock content %}

@@ -1,0 +1,81 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Dodawanie ucznia{% endblock title %}
+
+
+{% block breadcrumb %}
+{% if superUser is None %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/teacher/subject?id={{ teacherId }}&subjectId={{ subjectId }}">Przedmiot</a></li>
+<li class="breadcrumb-item active" aria-current="page">Dodawanie ucznia</li>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+
+				<div style="margin-top: 30px">
+					<h3>Wyszukiwanie uczniów:</h3>
+					<form method="GET" action="/school/add_subjectstudent" style="width: 500px;">
+						<input type="hidden" name="id" value="{{ schoolId }}">
+						<input type="hidden" name="subjectId" value="{{ subjectId }}">
+
+	            <!-- <label for="sName">Imię</label> -->
+	            <input style="width:40%;display:inline;" type="text" class="form-control" id="sName" placeholder="Imię" name="sName" value="{{ sName }}">
+	            <!-- <label for="sSurname">Nazwisko</label> -->
+	            <input style="width:40%;display:inline;" type="text" class="form-control" id="sSurname" placeholder="Nazwisko" name="sSurname" value="{{ sSurname }}">
+	        		<button style="width:15%;display:inline;" type="submit" class="btn btn-primary">Szukaj</button>
+
+	        </form>
+					<form method="GET" action="/teacher/subject" style="margin-top: 10px;width: 300px;">
+						<input type="hidden" name="id" value="{{ teacherId }}">
+						<input type="hidden" name="subjectId" value="{{ subjectId }}">
+						<button style="width: 100%" type="submit" class="btn btn-info">Anuluj</button>
+					</form>
+
+				</div>
+
+				<div style="margin-top: 30px">
+					<h3>Lista uczniów:</h3>
+					<table style="width=100%" class="table table-striped table-hover table-bordered">
+				<thead>
+					<tr>
+					<th>Imię</th>
+					<th>Nazwisko</th>
+					<th>E-Mail</th>
+					<th>Operacje</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for student in studentList %}
+						<tr>
+							<td>{{ student.name }}</td>
+							<td>{{ student.surname }}</td>
+							<td>{{ student.email }}</td>
+							<td>
+								<form method="POST" action="/school/add_subjectstudent_submit?id={{ schoolId }}&subjectId={{ subjectId }}">
+				        {% csrf_token %}
+				        <input type="hidden" name="studentId" value="{{ student.id }}">
+				        <button type="submit" class="btn btn-primary">Dodaj</button>
+				        </form>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+				<tfoot>
+					<tr>
+					<th>Imię</th>
+					<th>Nazwisko</th>
+					<th>E-Mail</th>
+					<th>Operacje</th>
+					</tr>
+				</tfoot>
+					</table>
+				</div>
+{% endblock content %}

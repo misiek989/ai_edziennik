@@ -1,0 +1,98 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Ocena{% endblock title %}
+
+
+{% block breadcrumb %}
+
+{% if pageSrc is not None %}
+
+{% if superUserRole == 2 %} {# teacher #}
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Strona główna</a></li>
+{% elif superUserRole == 1 %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/teacher/subject?id={{ teacherId }}&subjectId={{ subjectId }}">Przedmiot</a></li>
+<li class="breadcrumb-item"><a href="/student/marks_view?id={{ studentId }}&studentSubjectId={{ subjectStudentId }}&src=t">Podgląd</a></li>
+<li class="breadcrumb-item active" aria-current="page">Ocena</li>
+
+{% else %}
+
+{% if superUserRole == 2 %} {# teacher #}
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Strona główna</a></li>
+{% elif superUserRole == 1 %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/teacher/subject?id={{ teacherId }}&subjectId={{ subjectId }}">Przedmiot</a></li>
+<li class="breadcrumb-item active" aria-current="page">Ocena</li>
+
+
+{% endif %}
+
+
+
+{% endblock breadcrumb %}
+
+
+{% block content %}
+		<form method="POST" action="/teacher/edit_mark_submit?id={{ teacherId }}&markId={{ markId }}&subjectId={{ subjectId }}{% if pageSrc is not None %}&src=s{% endif %}" style="width: 300px;">
+			{% csrf_token %}
+			<div class="form-group">
+					<label for="date">Data</label>
+					<input type="text" class="form-control" id="date" placeholder="Data" value="{{ markDate }}" readonly>
+			</div>
+			<div class="form-group">
+					<label for="mark">Ocena</label>
+					<select class="form-control" id="mark" name="mark">
+						<option value="9" {% if markValue == 9 %}selected{% endif %}>6,0</option>
+						<option value="8" {% if markValue == 8 %}selected{% endif %}>5,5</option>
+						<option value="7" {% if markValue == 7 %}selected{% endif %}>5,0</option>
+						<option value="6" {% if markValue == 6 %}selected{% endif %}>4,5</option>
+						<option value="5" {% if markValue == 5 %}selected{% endif %}>4,0</option>
+						<option value="4" {% if markValue == 4 %}selected{% endif %}>3,5</option>
+						<option value="3" {% if markValue == 3 %}selected{% endif %}>3,0</option>
+						<option value="2" {% if markValue == 2 %}selected{% endif %}>2,5</option>
+						<option value="1" {% if markValue == 1 %}selected{% endif %}>2,0</option>
+						<option value="0" {% if markValue == 0 %}selected{% endif %}>1,0</option>
+					</select>
+			</div>
+			<div class="form-group">
+					<label for="weight">Waga</label>
+					<input type="text" class="form-control" id="weight" placeholder="Waga" name="weight" value="{{ markWeight }}">
+			</div>
+			<div class="form-group">
+					<label for="comment">Komentarz</label>
+					<input type="text" class="form-control" id="comment" placeholder="Komentarz" name="comment" value="{{ markComment }}">
+			</div>
+			<button style="width: 100%" type="submit" class="btn btn-primary">Potwierdź zmiany</button>
+		</form>
+			<form method="POST" action="/teacher/remove_mark_submit?id={{ teacherId }}&markId={{ markId }}&subjectId={{ subjectId }}{% if pageSrc is not None %}&src=s{% endif %}" style="margin-top: 10px;width: 300px;">
+			{% csrf_token %}
+			<button style="width: 100%" type="submit" class="btn btn-danger">Usuń</button>
+		</form>
+		{% if pageSrc is not None %}
+		<form method="GET" action="/student/marks_view" style="margin-top: 10px;width: 300px;">
+			<input type="hidden" name="id" value="{{ studentId }}">
+			<input type="hidden" name="studentSubjectId" value="{{ subjectStudentId }}">
+			<input type="hidden" name="src" value="t">
+			<button style="width: 100%" type="submit" class="btn btn-info">Anuluj</button>
+		</form>
+		{% else %}
+		<form method="GET" action="/teacher/subject" style="margin-top: 10px;width: 300px;">
+			<input type="hidden" name="id" value="{{ teacherId }}">
+			<input type="hidden" name="subjectId" value="{{ subjectId }}">
+			<button style="width: 100%" type="submit" class="btn btn-info">Anuluj</button>
+		</form>
+		{% endif %}
+
+{% endblock content %}

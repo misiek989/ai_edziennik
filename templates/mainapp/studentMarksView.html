@@ -9,7 +9,46 @@
 
 
 {% block breadcrumb %}
-<li class="breadcrumb-item active" aria-current="page">Strona główna</li>
+
+{% if pageSrc is not None %}
+
+
+{% if superUserRole == 2 %} {# teacher #}
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Strona główna</a></li>
+{% elif superUserRole == 1 %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/teacher/subject?id={{ teacherId }}&subjectId={{ subjectId }}">Przedmiot</a></li>
+<li class="breadcrumb-item active" aria-current="page">Podgląd</li>
+
+
+{% else %}
+
+
+{% if superUserRole == 3 %} {# student #}
+<li class="breadcrumb-item"><a href="/student?id={{ studentId }}">Strona główna</a></li>
+{% elif superUserRole == 1 %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school/student_list?id={{ schoolId }}">Uczniowie</a></li>
+<li class="breadcrumb-item"><a href="/student?id={{ studentId }}">Uczeń</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/school/student_list?id={{ schoolId }}">Uczniowie</a></li>
+<li class="breadcrumb-item"><a href="/student?id={{ studentId }}">Uczeń</a></li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page">Przedmiot</li>
+
+
+{% endif %}
+
+
+
 {% endblock breadcrumb %}
 
 
@@ -21,9 +60,16 @@
 		<h6>Adres szkoły: {{ schoolAddress }}</h6>
 	</div>
 
+	<div style="margin-top: 30px">
+		<h3>Średnia:</h3>
+		<span style="font-size: 1.2em;background-color: #{{ srMarkColor }};" class="badge badge-success">{{ srMark }}</span>
+	</div>
 
 	<div style="margin-top: 30px">
 		<h3>Lista ocen z przedmiotu {{ subjectName }}:</h3>
+		{% if superUser %}
+			<a style="margin-bottom: 10px" class="btn btn-danger" href="/teacher/add_mark?id={{ teacherId }}&subjectStudentId={{ subjectStudentId }}&src=s">Dodaj ocenę</a>
+		{% endif %}
 		<table style="width=100%" class="table table-striped table-hover table-bordered">
 	<thead>
 		<tr>
@@ -31,13 +77,18 @@
 			<th>Ocena</th>
 			<th>Waga</th>
 			<th>Komentarz</th>
+			{% if superUser %}
+				<th>Operacje</th>
+			{% endif %}
 		</tr>
 	</thead>
 	<tbody>
 		{% for mark in markList %}
 			<tr>
 				<td>{{ mark.date }}</td>
-				<td>{{ mark.mark }}</td>
+				<td>
+					<span style="font-size: 1.2em;background-color: #{{ mark.markColor }};" class="badge badge-success">{{ mark.mark }}</span>
+				</td>
 				<td>{{ mark.weight }}</td>
 				<td>
 					{% if mark.comment is None %}
@@ -46,6 +97,11 @@
 						{{ mark.comment }}
 					{% endif %}
 				</td>
+				{% if superUser %}
+					<td>
+						<a class="btn btn-danger" href="/teacher/edit_mark?id={{ teacherId }}&markId={{ mark.id }}&src=s">Zarządzaj oceną</a>
+					</td>
+				{% endif %}
 			</tr>
 		{% endfor %}
 	</tbody>
@@ -55,9 +111,61 @@
 			<th>Ocena</th>
 			<th>Waga</th>
 			<th>Komentarz</th>
+			{% if superUser %}
+				<th>Operacje</th>
+			{% endif %}
 		</tr>
 	</tfoot>
 		</table>
 	</div>
 
+	<div style="margin-top: 30px;width: 25%;">
+		<h3>Wykresy:</h3>
+		<canvas id="myChart" width="400" height="400"></canvas>
+	</div>
 {% endblock content %}
+
+
+{% block scripts %}
+<script>
+const ctx = document.getElementById('myChart');
+
+const data = {
+  labels: ['1,0', '2,0', '2,5', '3,0', '3,5', '4,0', '4,5', '5,0', '5,5', '6,0'],
+  datasets: [
+    {
+      label: 'Oceny',
+      data: {{ srPlotData }},//[1,2,3,4,5],
+      backgroundColor: [
+				'rgba(128, 0, 0, 0.2)',
+				'rgba(230, 0, 0, 0.2)',
+				'rgba(204, 58, 0, 0.2)',
+				'rgba(255, 119, 0, 0.2)',
+				'rgba(252, 210, 0, 0.2)',
+				'rgba(160, 204, 0, 0.2)',
+				'rgba(139, 204, 0, 0.2)',
+				'rgba(104, 222, 0, 0.2)',
+				'rgba(0, 242, 121, 0.2)',
+				'rgba(0, 242, 178, 0.2)'
+			],
+    }
+  ]
+};
+const myChart = new Chart(ctx, {
+	type: 'doughnut',
+	data: data,
+	options: {
+		responsive: true,
+		plugins: {
+			legend: {
+				position: 'top',
+			},
+			title: {
+				display: true,
+				text: 'Średnia ocen - wykres'
+			}
+		}
+	},
+});
+</script>
+{% endblock scripts %}

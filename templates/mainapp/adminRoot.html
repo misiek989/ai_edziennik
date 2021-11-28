@@ -33,15 +33,17 @@
 
 
 {% block content %}
+
 	<div style="margin-top: 30px;">
 		<h3>Dane administratora:</h3>
-		<h5>Imię i nazwisko: {{ userFName }} {{ userLName }}</h4>
+		<h5>Imię i nazwisko: {{ userFName }} {{ userLName }}</h5>
 	</div>
 
 
 
 	<div style="margin-top: 30px">
 		<h3>Lista szkół:</h3>
+		<a style="margin-bottom: 10px;" class="btn btn-danger" href="/admin/add_school">Dodaj szkołę</a>
 		<table style="width=100%" class="table table-striped table-hover table-bordered">
 	<thead>
 		<tr>
@@ -91,6 +93,5 @@
 		</tr>
 	</tfoot>
 		</table>
-		<a class="btn btn-danger" href="/admin/add_school">Dodaj szkołę</a>
 	</div>
 {% endblock content %}

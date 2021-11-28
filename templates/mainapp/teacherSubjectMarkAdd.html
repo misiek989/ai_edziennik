@@ -1,0 +1,131 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Dodawanie ocen{% endblock title %}
+
+{% block extra_css %}
+<style>
+bcomment {
+
+}
+bweight {
+
+}
+</style>
+{% endblock extra_css %}
+
+
+{% block breadcrumb %}
+{% if superUserRole == 2 %} {# teacher #}
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Strona główna</a></li>
+{% elif superUserRole == 1 %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/teacher/subject?id={{ teacherId }}&subjectId={{ subjectId }}">Przedmiot</a></li>
+<li class="breadcrumb-item active" aria-current="page">Dodawanie ocen</li>
+{% endblock breadcrumb %}
+
+
+
+{% block content %}
+<div style="margin-top: 30px">
+	<h3>Lista uczniów:</h3>
+	<form method="POST" action="/teacher/add_subject_mark_submit?id={{ teacherId }}&subjectId={{ subjectId }}">
+	{% csrf_token %}
+	<input type="hidden" name="cnt" value="{{ studentCount }}">
+	{% for student in studentList %}
+		<input type="hidden" name="ord_{{ student.ord }}" value="{{ student.ss_id }}">
+	{% endfor %}
+	<table style="width=100%" class="table table-striped table-hover table-bordered">
+<thead>
+	<tr>
+		<th colspan="2">Dane ucznia</th>
+		<th colspan="3">Ocena</th>
+	</tr>
+	<tr>
+		<th>Imię</th>
+		<th>Nazwisko</th>
+		<th>Ocena</th>
+		<th>Waga<a style="margin-left: 10px;" class="btn btn-primary" href="javascript:void(0);" onclick="copyWeights();">Kopiuj</a></th>
+		<th>Komentarz<a style="margin-left: 10px;" class="btn btn-primary" href="javascript:void(0);" onclick="copyComments();">Kopiuj</a></th>
+	</tr>
+</thead>
+<tbody>
+	{% for student in studentList %}
+		<tr>
+			<td>{{ student.name }}</td>
+			<td>{{ student.surname }}</td>
+			<td>
+				<select class="form-control" name="mark_{{ student.ord }}">
+					<option value="9" selected>6,0</option>
+					<option value="8">5,5</option>
+					<option value="7">5,0</option>
+					<option value="6">4,5</option>
+					<option value="5">4,0</option>
+					<option value="4">3,5</option>
+					<option value="3">3,0</option>
+					<option value="2">2,5</option>
+					<option value="1">2,0</option>
+					<option value="0">1,0</option>
+				</select>
+			</td>
+			<td>
+				<input type="text" class="form-control bweight" placeholder="Waga" name="weight_{{ student.ord }}" value="1">
+			</td>
+			<td>
+				<input type="text" class="form-control bcomment" placeholder="Komentarz" name="comment_{{ student.ord }}">
+			</td>
+
+		</tr>
+	{% endfor %}
+</tbody>
+<tfoot>
+	<tr>
+		<th>Imię</th>
+		<th>Nazwisko</th>
+		<th>Ocena</th>
+		<th>Waga</th>
+		<th>Komentarz</th>
+	</tr>
+	<tr>
+		<th colspan="2">Dane ucznia</th>
+		<th colspan="3">Ocena</th>
+	</tr>
+</tfoot>
+	</table>
+	<button style="width: 200px;" type="submit" class="btn btn-primary">Dodaj</button>
+	</form>
+	<form method="GET" action="/teacher/subject" style="margin-top: 10px;width: 100px;">
+		<input type="hidden" name="id" value="{{ teacherId }}">
+		<input type="hidden" name="subjectId" value="{{ subjectId }}">
+		<button style="width: 100%" type="submit" class="btn btn-info">Anuluj</button>
+	</form>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+function copyWeights(){
+	var elems = document.getElementsByClassName('bweight');
+	if(elems.length <= 1)return;
+	var newVal = elems[0].value;
+	for(var i=1;i<elems.length;i++){
+		var elem = elems[i];
+		elem.value = newVal;
+	}
+}
+function copyComments(){
+	var elems = document.getElementsByClassName('bcomment');
+	if(elems.length <= 1)return;
+	var newVal = elems[0].value;
+	for(var i=1;i<elems.length;i++){
+		var elem = elems[i];
+		elem.value = newVal;
+	}
+}
+</script>
+{% endblock scripts %}

@@ -1,0 +1,31 @@
+ {% extends 'mainapp/base.html' %}
+
+{% block title %}Dodawanie przedmiotu{% endblock title %}
+
+
+{% block breadcrumb %}
+{% if not superUser %}
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+{% else %}
+	<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+	<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
+<li class="breadcrumb-item active" aria-current="page">Dodaj przedmiot</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+        <form method="POST" action="/school/add_subject_submit?id={{ schoolId }}" style="width: 300px;">
+        {% csrf_token %}
+				<input type="hidden" name="teacherId" value="{{ teacherId }}">
+        <div class="form-group">
+            <label for="name">Nazwa</label>
+            <input type="text" class="form-control" id="name" placeholder="Nazwa" name="name">
+        </div>
+        <button style="width: 100%" type="submit" class="btn btn-primary">Dodaj</button>
+        </form>
+				<form method="GET" action="/teacher" style="margin-top: 10px;width: 300px;">
+					<input type="hidden" name="id" value="{{ teacherId }}">
+					<button style="width: 100%" type="submit" class="btn btn-info">Anuluj</button>
+				</form>
+{% endblock content %}

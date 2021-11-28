@@ -62,7 +62,7 @@ class Teacher(models.Model):
 
 	school = models.ForeignKey(
 		School,
-		on_delete = models.DO_NOTHING
+		on_delete = models.CASCADE
 	)
 
 	def __str__(self):
@@ -80,7 +80,7 @@ class Student(models.Model):
 
 	school = models.ForeignKey(
 		School,
-		on_delete = models.DO_NOTHING
+		on_delete = models.CASCADE
 	)
 
 	def __str__(self):
@@ -91,7 +91,7 @@ class Subject(models.Model):
 
 	teacherId = models.ForeignKey(
 		Teacher,
-		on_delete = models.DO_NOTHING
+		on_delete = models.CASCADE
 	)
 
 	def __str__(self):
@@ -101,12 +101,12 @@ class SubjectStudent(models.Model):
 
 	subjectId = models.ForeignKey(
 		Subject,
-		on_delete = models.DO_NOTHING
+		on_delete = models.CASCADE
 	)
 
 	studentId = models.ForeignKey(
 		Student,
-		on_delete = models.DO_NOTHING
+		on_delete = models.CASCADE
 	)
 
 	def __str__(self):
@@ -121,7 +121,7 @@ class Mark(models.Model):
 
 	idSubjectStudent = models.ForeignKey(
 		SubjectStudent,
-		on_delete = models.DO_NOTHING
+		on_delete = models.CASCADE
 	)
 
 	def __str__(self):
