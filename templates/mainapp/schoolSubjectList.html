@@ -64,7 +64,7 @@
 				<td>{{ subject.teacherSurname }}</td>
 				<td>
 					<div class="btn-group" role="group">
-						<a class="btn btn-primary" href="/school/subject?id={{ subject.id }}">Podgląd</a>
+						<a class="btn btn-primary" href="/teacher/subject?id={{ subject.teacherId }}&subjectId={{ subject.id }}&src=sc">Podgląd</a>
 						<a class="btn btn-danger" href="/school/remove_subject?id={{ schoolId }}&subjectId={{ subject.id }}">Usuń</a>
 					</div>
 				</td>

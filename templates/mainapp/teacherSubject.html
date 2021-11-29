@@ -11,6 +11,24 @@
 
 
 {% block breadcrumb %}
+
+
+{% if pageSrc is not None %}
+
+
+{% if superUserRole == 1 %} {# school #}
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Strona główna</a></li>
+{% else %} {# admin #}
+<li class="breadcrumb-item"><a href="/admin">Strona główna</a></li>
+<li class="breadcrumb-item"><a href="/school?id={{ schoolId }}">Szkoła</a></li>
+{% endif %}
+<li class="breadcrumb-item"><a href="/school/student_list?id={{ schoolId }}">Przedmioty</a></li>
+<li class="breadcrumb-item active" aria-current="page">Podgląd</li>
+
+
+{% else %}
+
+
 {% if superUserRole == 2 %} {# teacher #}
 <li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Strona główna</a></li>
 {% elif superUserRole == 1 %} {# school #}
@@ -22,6 +40,15 @@
 <li class="breadcrumb-item"><a href="/teacher?id={{ teacherId }}">Nauczyciel</a></li>
 {% endif %}
 <li class="breadcrumb-item active" aria-current="page">Przedmiot</li>
+
+
+{% endif %}
+
+
+
+
+
+
 {% endblock breadcrumb %}
 
 

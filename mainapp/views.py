@@ -725,6 +725,7 @@ def schoolSubjectList_x(request, schoolObj, superUser, extra):
 		c = {
 			'id': sx1.id,
 			'name': sx1.name,
+			'teacherId': teacherx2.id,
 			'teacherName': teacherx2.name,
 			'teacherSurname': teacherx2.surname,
 		}
@@ -917,7 +918,7 @@ def schoolSubjectStudentAddSubmit(request):
 		'caption': 'OK',
 		'type': 'success',
 	}
-	return teacherSubject_x(request, teacherObj, True, subjectId, extra)
+	return teacherSubject_x(request, teacherObj, True, subjectId, None, extra)
 def schoolSubjectStudentRemove(request):
 	schoolObj, superUser = getSchoolId(request)
 	if schoolObj is None:
@@ -958,7 +959,7 @@ def schoolSubjectStudentRemoveSubmit(request):
 		'caption': 'OK',
 		'type': 'success',
 	}
-	return teacherSubject_x(request, teacherObj, True, subjectId, extra)
+	return teacherSubject_x(request, teacherObj, True, subjectId, None, extra)
 
 
 
@@ -1004,11 +1005,13 @@ def teacherSubject(request):
 	if teachObj is None:
 		return HttpResponseForbidden()
 	subjectId2 = request.GET.get('subjectId')
-	return teacherSubject_x(request, teachObj, superUser, subjectId2, None)
-def teacherSubject_x(request, teachObj, superUser, subjectId2, extra):
+	pageSrc = request.GET.get('src')
+	return teacherSubject_x(request, teachObj, superUser, subjectId2, pageSrc, None)
+def teacherSubject_x(request, teachObj, superUser, subjectId2, pageSrc, extra):
 	schoolObj = teachObj.school
 
-
+	if pageSrc != 'sc':
+		pageSrc = None
 
 	subjectObj = models.Subject.objects.get(id=subjectId2)
 	if subjectObj.teacherId != teachObj:
@@ -1087,6 +1090,7 @@ def teacherSubject_x(request, teachObj, superUser, subjectId2, extra):
 		'markCount': range(markColumsCount),
 		'markCountNum': markColumsCount,
 		'srPlotData': srPlotData,
+		'pageSrc': pageSrc,
 	}
 	return render(request, 'mainapp/teacherSubject.html', context)
 
@@ -1147,7 +1151,7 @@ def teacherAddMarkSubmit(request):
 		'type': 'success',
 	}
 	if pageSrc is None:
-		return teacherSubject_x(request, teachObj, superUser, subjectStudentObj.subjectId.id, extra)
+		return teacherSubject_x(request, teachObj, superUser, subjectStudentObj.subjectId.id, pageSrc, extra)
 	else:
 		return studentMarksView_x(request, subjectStudentObj.studentId, True, 't', subjectStudentObj.id, extra)
 def teacherEditMark(request):
@@ -1214,9 +1218,8 @@ def teacherEditMarkSubmit(request):
 		'caption': 'OK',
 		'type': 'success',
 	}
-	return teacherSubject_x(request, teachObj, superUser, subjectId, extra)
 	if pageSrc is None:
-		return teacherSubject_x(request, teachObj, superUser, subjectId, extra)
+		return teacherSubject_x(request, teachObj, superUser, subjectId, pageSrc, extra)
 	else:
 		return studentMarksView_x(request, markObj.idSubjectStudent.studentId, True, 't', markObj.idSubjectStudent.id, extra)
 def teacherRemoveMarkSubmit(request):
@@ -1236,7 +1239,7 @@ def teacherRemoveMarkSubmit(request):
 		'caption': 'OK',
 		'type': 'success',
 	}
-	return teacherSubject_x(request, teachObj, superUser, subjectId, extra)
+	return teacherSubject_x(request, teachObj, superUser, subjectId, pageSrc, extra)
 
 def teacherAddSubjectMark(request):
 	teachObj, superUser = getTeacherId(request)
@@ -1313,7 +1316,7 @@ def teacherAddSubjectMarkSubmit(request):
 		'caption': 'OK',
 		'type': 'success',
 	}
-	return teacherSubject_x(request, teachObj, superUser, subjectId, extra)
+	return teacherSubject_x(request, teachObj, superUser, subjectId, None, extra)
 
 
 
