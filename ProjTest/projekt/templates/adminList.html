@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pl">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>Test</title>
+		<style>
+			table, th, td {
+				border: 1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="margin-top: 30px">
+			<h3>Lista</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Imię</th>
+						<th>Nazwisko</th>
+						<th>E-Mail</th>
+						<th>Operacje</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for admin in adminList %}
+					<tr>
+						<td>{{ admin.name }}</td>
+						<td>{{ admin.surname }}</td>
+						<td>{{ admin.email }}</td>
+						<td>
+							<form method="POST" action="/">
+								{% csrf_token %}
+								<input type="hidden" name="mode" value="r">
+								<input type="hidden" name="id" value="{{ admin.id }}">
+								<button type="submit">Usuń</button>
+							</form>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<div style="margin-top: 30px">
+			<h3>Dodawanie</h3>
+			<form method="POST" action="/">
+				{% csrf_token %}
+				<input type="hidden" name="mode" value="c">
+				<input type="text" placeholder="Imię" name="fname">
+				<input type="text" placeholder="Nazwisko" name="lname">
+				<input type="email" placeholder="E-mail" name="email">
+				<button type="submit">Dodaj</button>
+			</form>
+		</div>
+	</body>
+</html>
+
+
+
+
+
+
+
+
