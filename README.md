@@ -1,2 +1,2 @@
 Projekt - główny projekt\
-ProjTest - projekt testowy\
+ProjTest - projekt testowy
